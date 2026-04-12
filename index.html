@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AirBridge — Buy Airtime on WhatsApp</title>
+  <meta name="description" content="Send airtime to any Zimbabwe network instantly via WhatsApp. Powered by EcoCash. No app needed." />
+  <meta property="og:title" content="AirBridge — Buy Airtime on WhatsApp" />
+  <meta property="og:description" content="Send airtime to any Zimbabwe network instantly via WhatsApp. Powered by EcoCash. No app needed." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────── */
+    :root {
+      --primary:       #1A3C5E;
+      --primary-dark:  #122d47;
+      --primary-light: #254f7a;
+      --accent:        #C8960C;
+      --accent-light:  #e5ad22;
+      --wa:            #25D366;
+      --wa-dark:       #1aaa52;
+      --bg:            #FFFFFF;
+      --surface:       #F5F7FA;
+      --surface-2:     #EDF0F5;
+      --text:          #0d1f30;
+      --text-muted:    #556a7e;
+      --border:        #d6dce5;
+      --shadow-sm:     0 2px 8px rgba(26,60,94,.08);
+      --shadow-md:     0 8px 32px rgba(26,60,94,.14);
+      --shadow-lg:     0 20px 60px rgba(26,60,94,.18);
+      --radius-sm:     8px;
+      --radius-md:     16px;
+      --radius-lg:     24px;
+      --radius-full:   9999px;
+      --font-head:     'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --transition:    0.25s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ─── RESET ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── UTILITIES ─────────────────────────────────────── */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section-tag {
+      display: inline-block;
+      background: rgba(200,150,12,.12);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(200,150,12,.25);
+    }
+    .section-heading {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.15;
+    }
+
+    /* ─── NAVBAR ────────────────────────────────────────── */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow var(--transition);
+    }
+    #nav.scrolled { box-shadow: var(--shadow-md); }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+    .nav-logo {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -.01em;
+    }
+    .nav-logo .air   { color: var(--primary); }
+    .nav-logo .bridge{ color: var(--accent);  }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--primary); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-body);
+      font-size: .9rem;
+      font-weight: 500;
+      padding: 11px 22px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(26,60,94,.35);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 6px 20px rgba(26,60,94,.45);
+      transform: translateY(-1px);
+    }
+    .btn-wa {
+      background: var(--wa);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37,211,102,.35);
+    }
+    .btn-wa:hover {
+      background: var(--wa-dark);
+      box-shadow: 0 6px 20px rgba(37,211,102,.45);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+    .btn-outline:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-lg {
+      font-size: 1rem;
+      padding: 15px 30px;
+    }
+
+    /* hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: all var(--transition);
+    }
+
+    /* ─── HERO ──────────────────────────────────────────── */
+    #hero {
+      padding: 160px 0 100px;
+      background: linear-gradient(135deg, #f0f5fb 0%, #fff 60%, #fdf9ef 100%);
+      position: relative;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(26,60,94,.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,150,12,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+    .hero-left { position: relative; z-index: 2; }
+    .hero-left .section-tag { margin-bottom: 20px; }
+    .hero-headline {
+      font-family: var(--font-head);
+      font-size: clamp(2.6rem, 5vw, 3.8rem);
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .hero-headline em {
+      font-style: normal;
+      color: var(--accent);
+      position: relative;
+    }
+    .hero-headline em::after {
+      content: '';
+      position: absolute;
+      bottom: 2px; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      opacity: .4;
+    }
+    .hero-sub {
+      font-size: 1.08rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 440px;
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Phone Mockup ── */
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      /* Space for badges without overflow clipping */
+      padding: 50px 90px 50px 80px;
+    }
+    .phone-wrap {
+      position: relative;
+      animation: floatPhone 4s ease-in-out infinite;
+    }
+    @keyframes floatPhone {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-14px); }
+    }
+    .phone-shell {
+      width: 250px;
+      background: #111;
+      border-radius: 44px;
+      padding: 12px;
+      box-shadow: 0 40px 100px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.08);
+      position: relative;
+    }
+    .phone-notch {
+      width: 100px;
+      height: 24px;
+      background: #111;
+      border-radius: 0 0 18px 18px;
+      position: absolute;
+      top: 12px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+    .phone-screen {
+      background: #EFE6DD;
+      border-radius: 32px;
+      overflow: hidden;
+      height: 520px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .wa-header {
+      background: #F6F6F6;
+      padding: 40px 12px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #E0E0E0;
+    }
+    .wa-header-left {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .wa-back { color: #000; font-size: 1.1rem; font-weight: 500; margin-top:-2px;}
+    .wa-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #D1F4EC;
+      color: #000;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .wa-contact-name { font-size: .88rem; font-weight: 600; color: #000; }
+    .wa-header-right {
+      display: flex; gap: 14px;
+    }
+    .wa-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; color: #000; }
+    
+    .wa-chat { 
+      padding: 12px 10px; 
+      flex: 1; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+      overflow-y: hidden;
+    }
+    .wa-notice {
+      background: #FEF1C8;
+      color: #796120;
+      font-size: .6rem;
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin: 0 8px 10px;
+      line-height: 1.35;
+      box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    }
+    .bubble {
+      max-width: 85%;
+      padding: 7px 11px;
+      font-size: .8rem;
+      line-height: 1.35;
+      position: relative;
+      color: #000;
+      box-shadow: 0 1px 1px rgba(0,0,0,.08);
+      margin-bottom: 2px;
+    }
+    .bubble-user {
+      background: #D9FDD3;
+      align-self: flex-end;
+      border-radius: 14px 14px 4px 14px;
+    }
+    .bubble-bot {
+      background: #FFF;
+      align-self: flex-start;
+      border-radius: 14px 14px 14px 4px;
+    }
+    .bubble-bot b { color: #000; font-weight: 600; }
+    .bubble .time {
+      font-size: .55rem;
+      color: rgba(0,0,0,.45);
+      float: right;
+      margin: 6px -2px -4px 8px;
+    }
+    .wa-input-area {
+      background: #F6F6F6;
+      padding: 10px 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid #E0E0E0;
+    }
+    .wa-input-pill {
+      flex: 1;
+      height: 32px;
+      border-radius: 16px;
+      background: #FFF;
+      border: 1px solid #E5E5E5;
+    }
+    .wa-action-icon {
+      width: 24px; height: 24px; color: #000;
+      fill: none; stroke: currentColor; stroke-width: 1.5;
+    }
+
+    /* ── Decorative floating cards ── */
+    .hero-badge {
+      position: absolute;
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px 16px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--text);
+      z-index: 10;
+    }
+    .hero-badge .badge-icon { font-size: 1.3rem; }
+    .hero-badge-tl {
+      /* Sits sticking out the top-left */
+      top: 40px;
+      left: -80px;
+      animation: floatBadge 3.5s 0.5s ease-in-out infinite;
+    }
+    .hero-badge-br {
+      /* Sits sticking out the bottom-right */
+      bottom: 40px;
+      right: -80px;
+      animation: floatBadge 4s 1s ease-in-out infinite;
+    }
+    @keyframes floatBadge {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    /* ─── HOW IT WORKS ──────────────────────────────────── */
+    #how {
+      padding: 100px 0;
+      background: var(--surface);
+      position: relative;
+    }
+    .section-intro {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-intro .section-tag { margin-bottom: 14px; }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 44px;
+      left: calc(12.5% + 44px);
+      right: calc(12.5% + 44px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      opacity: .2;
+      z-index: 0;
+    }
+    .step-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      border: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .step-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: var(--accent);
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+    .step-card h3 {
+      font-family: var(--font-head);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .step-card p {
+      font-size: .9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── NETWORKS ──────────────────────────────────────── */
+    #networks {
+      padding: 80px 0;
+      background: var(--bg);
+    }
+    .networks-inner { text-align: center; }
+    .networks-inner .section-heading { margin: 14px 0 36px; }
+    .chip-list {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: var(--radius-full);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      font-weight: 500;
+      font-size: .95rem;
+      transition: all var(--transition);
+      cursor: default;
+    }
+    .chip:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-sm);
+    }
+    .chip-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .chip-powered {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 28px;
+      font-size: .85rem;
+      color: var(--text-muted);
+    }
+    .chip-powered .ecobadge {
+      background: #007A4B;
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+    }
+
+    /* ─── TRUST CARDS ───────────────────────────────────── */
+    #trust {
+      padding: 100px 0;
+      background: var(--surface);
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 56px;
+    }
+    .trust-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      border: 1px solid var(--border);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .trust-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .trust-icon {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      font-size: 1.5rem;
+    }
+    .trust-card h3 {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .trust-card p {
+      font-size: .92rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ─── CTA BAND ──────────────────────────────────────── */
+    #cta {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      top: -150px; right: -150px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: rgba(200,150,12,.12);
+    }
+    #cta::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.04);
+    }
+    #cta .container { position: relative; z-index: 1; }
+    #cta h2 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+    #cta p {
+      font-size: 1.08rem;
+      color: rgba(255,255,255,.7);
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+    .wa-btn-lg {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--wa);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 600;
+      padding: 18px 38px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(37,211,102,.4);
+      transition: all var(--transition);
+    }
+    .wa-btn-lg:hover {
+      background: var(--wa-dark);
+      box-shadow: 0 12px 40px rgba(37,211,102,.5);
+      transform: translateY(-2px);
+    }
+    .wa-icon-lg {
+      width: 28px; height: 28px;
+      fill: #fff;
+    }
+
+    /* ─── FOOTER ────────────────────────────────────────── */
+    #footer {
+      background: var(--primary-dark);
+      padding: 40px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo { font-size: 1.25rem; font-family: var(--font-head); font-weight: 800; }
+    .footer-logo .air   { color: rgba(255,255,255,.9); }
+    .footer-logo .bridge{ color: var(--accent); }
+    .footer-copy {
+      font-size: .82rem;
+      color: rgba(255,255,255,.45);
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: .82rem;
+      color: rgba(255,255,255,.5);
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: #fff; }
+
+    /* ─── SCROLL ANIMATIONS ─────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── MOBILE NAV ────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 68px; left: 0; right: 0;
+        background: rgba(255,255,255,.98);
+        backdrop-filter: blur(14px);
+        padding: 20px 24px;
+        gap: 18px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+      }
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid::before { display: none; }
+    }
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-sub { max-width: 100%; }
+      .hero-ctas { justify-content: center; }
+      .hero-right { margin-top: 40px; }
+      .hero-badge-tl { display: none; }
+      .hero-badge-br { display: none; }
+      .trust-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      #hero { padding-top: 110px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ════════════════ NAVBAR ════════════════ -->
+  <header id="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo"><span class="air">Air</span><span class="bridge">Bridge</span></a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#networks">Networks</a></li>
+          <li><a href="#trust">Why AirBridge</a></li>
+        </ul>
+        <a href="https://wa.me/2637XXXXXXXX?text=BUY" class="btn btn-primary" id="nav-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.569-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.109.548 4.09 1.508 5.813L.057 23.785c-.063.236.135.457.374.398l6.098-1.424A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.6a9.572 9.572 0 01-4.895-1.348l-.35-.208-3.619.846.884-3.523-.228-.363A9.578 9.578 0 012.4 12C2.4 6.698 6.698 2.4 12 2.4S21.6 6.698 21.6 12 17.302 21.6 12 21.6z"/></svg>
+          Get started on WhatsApp
+        </a>
+        <div class="hamburger" id="hamburger" aria-label="Toggle menu" role="button" tabindex="0">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ════════════════ HERO ════════════════ -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <!-- Left -->
+        <div class="hero-left reveal">
+          <span class="section-tag">Zimbabwe's airtime platform</span>
+          <h1 class="hero-headline">Buy airtime on<br><em>WhatsApp</em></h1>
+          <p class="hero-sub">
+            Send airtime to any Econet, NetOne, or Telecel number in seconds — right from your WhatsApp chat. Powered by EcoCash.
+          </p>
+          <div class="hero-ctas">
+            <a href="https://wa.me/2637XXXXXXXX?text=BUY" class="btn btn-wa btn-lg" id="hero-cta-wa">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.569-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.109.548 4.09 1.508 5.813L.057 23.785c-.063.236.135.457.374.398l6.098-1.424A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.6a9.572 9.572 0 01-4.895-1.348l-.35-.208-3.619.846.884-3.523-.228-.363A9.578 9.578 0 012.4 12C2.4 6.698 6.698 2.4 12 2.4S21.6 6.698 21.6 12 17.302 21.6 12 21.6z"/></svg>
+              Start on WhatsApp
+            </a>
+            <a href="#how" class="btn btn-outline btn-lg" id="hero-cta-how">How it works</a>
+          </div>
+        </div>
+
+        <!-- Right – Phone mockup -->
+        <div class="hero-right reveal" style="transition-delay:.15s">
+          <div class="phone-wrap">
+            <!-- Floating badges -->
+            <div class="hero-badge hero-badge-tl">
+              <span class="badge-icon">⚡</span>
+              <div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-bottom:1px;">Delivery speed</div>
+                <div style="font-weight:700;color:var(--primary);">Instant delivery</div>
+              </div>
+            </div>
+            <div class="hero-badge hero-badge-br">
+              <span class="badge-icon" style="font-family: var(--font-head); font-weight: 800; font-size: 1rem; color: var(--wa);">USD</span>
+              <div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-bottom:1px;">Networks covered</div>
+                <div style="font-weight:700;color:var(--primary);">Econet · NetOne · Telecel</div>
+              </div>
+            </div>
+
+            <div class="phone-shell">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <!-- iOS WhatsApp header -->
+                <div class="wa-header">
+                  <div class="wa-header-left">
+                    <div class="wa-back">〈</div>
+                    <div class="wa-avatar">🌉</div>
+                    <div class="wa-contact-name">AirBridge</div>
+                  </div>
+                  <div class="wa-header-right">
+                    <svg class="wa-icon" viewBox="0 0 24 24"><path d="M15 10l4.55-4.55A1 1 0 0 1 21 6.16v11.68a1 1 0 0 1-1.45.89L15 14v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v4z"></path></svg>
+                    <svg class="wa-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  </div>
+                </div>
+                <!-- Chat -->
+                <div class="wa-chat">
+                  <div class="wa-notice">
+                    🔒 Messages are end-to-end encrypted.
+                  </div>
+                  <div class="bubble bubble-user">Hey! How do I buy airtime?<span class="time">10:01 AM <span style="color:#53bDEB">✓✓</span></span></div>
+                  <div class="bubble bubble-bot">
+                    Welcome to <b>AirBridge</b> 🌉<br>
+                    Reply <b>BUY</b> to start buying airtime.
+                    <span class="time">10:01 AM</span>
+                  </div>
+                  <div class="bubble bubble-user">BUY<span class="time">10:02 AM <span style="color:#53bDEB">✓✓</span></span></div>
+                  <div class="bubble bubble-bot">
+                    Which network?<br>
+                    1️⃣ Econet &nbsp; 2️⃣ NetOne<br>
+                    <span class="time">10:02 AM</span>
+                  </div>
+                  <div class="bubble bubble-user">Econet $5 for 0771234567<span class="time">10:02 AM <span style="color:#53bDEB">✓✓</span></span></div>
+                  <div class="bubble bubble-bot">
+                    ✅ Confirm via <b>EcoCash</b><br>
+                    <i style="opacity:.6;font-size: .75rem;">Approve prompt on your phone!</i>
+                    <span class="time">10:03 AM</span>
+                  </div>
+                </div>
+                <!-- iOS Input Area -->
+                <div class="wa-input-area">
+                  <svg class="wa-action-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+                  <div class="wa-input-pill"></div>
+                  <svg class="wa-action-icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  <svg class="wa-action-icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"></path></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ HOW IT WORKS ════════════════ -->
+  <section id="how">
+    <div class="container">
+      <div class="section-intro reveal">
+        <span class="section-tag">Simple process</span>
+        <h2 class="section-heading" style="margin-top:14px;">Three steps, that's it</h2>
+        <p style="color:var(--text-muted);margin-top:12px;font-size:1rem;max-width:500px;margin-left:auto;margin-right:auto;">
+          No apps to download. No accounts to create. Just open WhatsApp.
+        </p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card reveal" style="transition-delay:.05s">
+          <div class="step-num">01</div>
+          <h3>Message us</h3>
+          <p>Send <strong>'BUY'</strong> to our WhatsApp number to kick off the process.</p>
+        </div>
+        <div class="step-card reveal" style="transition-delay:.1s">
+          <div class="step-num">02</div>
+          <h3>Enter details</h3>
+          <p>Tell us the network, amount, and the recipient's phone number.</p>
+        </div>
+        <div class="step-card reveal" style="transition-delay:.15s">
+          <div class="step-num">03</div>
+          <h3>Pay via EcoCash</h3>
+          <p>Approve the payment prompt that appears on your phone — done.</p>
+        </div>
+        <div class="step-card reveal" style="transition-delay:.2s">
+          <div class="step-num">04</div>
+          <h3>Airtime delivered</h3>
+          <p>Recipient gets airtime instantly. You receive a digital receipt.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NETWORKS ════════════════ -->
+  <section id="networks">
+    <div class="container">
+      <div class="networks-inner reveal">
+        <span class="section-tag">Coverage</span>
+        <h2 class="section-heading">All major Zimbabwe networks</h2>
+        <div class="chip-list">
+          <div class="chip">
+            <span class="chip-dot" style="background:#00A550;"></span>
+            Econet Wireless
+          </div>
+          <div class="chip">
+            <span class="chip-dot" style="background:#D4000E;"></span>
+            NetOne
+          </div>
+          <div class="chip">
+            <span class="chip-dot" style="background:#0066CC;"></span>
+            Telecel Zimbabwe
+          </div>
+        </div>
+        <div class="chip-powered">
+          <span>Payments powered by</span>
+          <span class="ecobadge">EcoCash</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ TRUST ════════════════ -->
+  <section id="trust">
+    <div class="container">
+      <div class="section-intro reveal">
+        <span class="section-tag">Why choose us</span>
+        <h2 class="section-heading" style="margin-top:14px;">Built for Zimbabwe</h2>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card reveal" style="transition-delay:.05s">
+          <div class="trust-icon">🔒</div>
+          <h3>Secure payments</h3>
+          <p>All transactions go through EcoCash. We never store your PIN or wallet credentials.</p>
+        </div>
+        <div class="trust-card reveal" style="transition-delay:.1s">
+          <div class="trust-icon" style="background:linear-gradient(135deg,#C8960C,#e5ad22);">⚡</div>
+          <h3>Instant delivery</h3>
+          <p>Airtime is sent within seconds of payment confirmation — no waiting, no hassle.</p>
+        </div>
+        <div class="trust-card reveal" style="transition-delay:.15s">
+          <div class="trust-icon" style="background:linear-gradient(135deg,#25D366,#1aaa52);">💬</div>
+          <h3>No app needed</h3>
+          <p>Everything happens inside WhatsApp — the app you already use every day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ CTA BAND ════════════════ -->
+  <section id="cta">
+    <div class="container reveal">
+      <h2>Ready to buy airtime?</h2>
+      <p>Join thousands of Zimbabweans using AirBridge every day</p>
+      <a href="https://wa.me/2637XXXXXXXX?text=BUY" class="wa-btn-lg" id="cta-wa">
+        <svg class="wa-icon-lg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.569-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.109.548 4.09 1.508 5.813L.057 23.785c-.063.236.135.457.374.398l6.098-1.424A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.6a9.572 9.572 0 01-4.895-1.348l-.35-.208-3.619.846.884-3.523-.228-.363A9.578 9.578 0 012.4 12C2.4 6.698 6.698 2.4 12 2.4S21.6 6.698 21.6 12 17.302 21.6 12 21.6z"/>
+        </svg>
+        Chat on WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- ════════════════ FOOTER ════════════════ -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo"><span class="air">Air</span><span class="bridge">Bridge</span></div>
+        <p class="footer-copy">© 2025 AirBridge Zimbabwe. All rights reserved.</p>
+        <ul class="footer-links">
+          <li><a href="#" id="footer-privacy">Privacy</a></li>
+          <li><a href="#" id="footer-terms">Terms</a></li>
+          <li><a href="#" id="footer-contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ════════════════ JS ════════════════ -->
+  <script>
+    /* Navbar scroll effect */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    /* Hamburger toggle */
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+    hamburger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') navLinks.classList.toggle('open');
+    });
+    /* Close nav on link click */
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    /* Scroll reveal */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* Smooth active link highlighting */
+    const sections = document.querySelectorAll('section[id]');
+    const navAs    = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navAs.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--primary)' : '';
+        a.style.fontWeight = a.getAttribute('href') === `#${current}` ? '600' : '';
+      });
+    });
+  </script>
+</body>
+</html>
